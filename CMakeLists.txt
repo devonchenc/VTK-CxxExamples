@@ -1,0 +1,16 @@
+PROJECT(VTKBOOK)
+
+INCLUDE(${CMAKE_ROOT}/Modules/FindVTK.cmake)
+IF(USE_VTK_FILE)
+  INCLUDE(${USE_VTK_FILE})
+  SET(VTK_FOUND 1)
+ENDIF(USE_VTK_FILE)
+
+IF(VTK_FOUND)
+  SET(FILES "Model;Cone;Cone2;Cone3;Cone4;Cone5;Mace;expCos;ImportExport")
+  FOREACH(f ${FILES})
+    ADD_EXECUTABLE(${f} ${f}.cxx)
+    TARGET_LINK_LIBRARIES(${f} vtkRendering vtkIO)
+  ENDFOREACH(f)
+
+ENDIF(VTK_FOUND)
