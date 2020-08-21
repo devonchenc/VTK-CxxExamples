@@ -7,89 +7,99 @@
 #include "vtkCubeSource.h"
 #include "vtkSphereSource.h"
 #include "vtkProperty.h"
+#include "vtkAutoInit.h" 
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
+VTK_MODULE_INIT(vtkInteractionStyle);
 
-main ()
+#pragma comment(lib, "vtkCommonCore-9.0d.lib")
+#pragma comment(lib, "vtkFiltersSources-9.0d.lib")
+#pragma comment(lib, "vtkCommonExecutionModel-9.0d.lib")
+#pragma comment(lib, "vtkRenderingCore-9.0d.lib")
+#pragma comment(lib, "vtkRenderingOpenGL2-9.0d.lib")
+#pragma comment(lib, "vtkInteractionStyle-9.0d.lib")
+
+int main(int argc, char *argv[])
 {
-  // create rendering windows and three renderers
-  vtkRenderer *ren1 = vtkRenderer::New();
-  vtkRenderer *ren2 = vtkRenderer::New();
-  vtkRenderWindow *renWindow1 = vtkRenderWindow::New();
+// create rendering windows and three renderers
+    vtkRenderer *ren1 = vtkRenderer::New();
+    vtkRenderer *ren2 = vtkRenderer::New();
+    vtkRenderWindow *renWindow1 = vtkRenderWindow::New();
     renWindow1->AddRenderer(ren1);
     renWindow1->AddRenderer(ren2);
-  vtkRenderWindowInteractor *iren1 = vtkRenderWindowInteractor::New();
+    vtkRenderWindowInteractor *iren1 = vtkRenderWindowInteractor::New();
     iren1->SetRenderWindow(renWindow1);
 
-  vtkRenderer *ren3 = vtkRenderer::New();
-  vtkRenderWindow *renWindow2 = vtkRenderWindow::New();
+    vtkRenderer *ren3 = vtkRenderer::New();
+    vtkRenderWindow *renWindow2 = vtkRenderWindow::New();
     renWindow2->AddRenderer(ren3);
-  vtkRenderWindowInteractor *iren2 = vtkRenderWindowInteractor::New();
+    vtkRenderWindowInteractor *iren2 = vtkRenderWindowInteractor::New();
     iren2->SetRenderWindow(renWindow2);
 
-  // create an actor and give it cone geometry
-  vtkConeSource *cone = vtkConeSource::New();
-     cone->SetResolution(8);
-  vtkPolyDataMapper *coneMapper = vtkPolyDataMapper::New();
-    coneMapper->SetInput(cone->GetOutput());
-  vtkActor *coneActor = vtkActor::New();
+    // create an actor and give it cone geometry
+    vtkConeSource *cone = vtkConeSource::New();
+    cone->SetResolution(8);
+    vtkPolyDataMapper *coneMapper = vtkPolyDataMapper::New();
+    coneMapper->SetInputConnection(cone->GetOutputPort());
+    vtkActor *coneActor = vtkActor::New();
     coneActor->SetMapper(coneMapper);
-    coneActor->GetProperty()->SetColor(0.2000,0.6300,0.7900);
+    coneActor->GetProperty()->SetColor(0.2000, 0.6300, 0.7900);
 
-  // create an actor and give it cube geometry
-  vtkCubeSource *cube = vtkCubeSource::New();
-  vtkPolyDataMapper *cubeMapper = vtkPolyDataMapper::New();
-    cubeMapper->SetInput(cube->GetOutput());
-  vtkActor *cubeActor = vtkActor::New();
+    // create an actor and give it cube geometry
+    vtkCubeSource *cube = vtkCubeSource::New();
+    vtkPolyDataMapper *cubeMapper = vtkPolyDataMapper::New();
+    cubeMapper->SetInputConnection(cube->GetOutputPort());
+    vtkActor *cubeActor = vtkActor::New();
     cubeActor->SetMapper(cubeMapper);
-    cubeActor->GetProperty()->SetColor(0.9804,0.5020,0.4471);
+    cubeActor->GetProperty()->SetColor(0.9804, 0.5020, 0.4471);
 
-  // create an actor and give it sphere geometry
-  vtkSphereSource *sphere = vtkSphereSource::New();
+    // create an actor and give it sphere geometry
+    vtkSphereSource *sphere = vtkSphereSource::New();
     sphere->SetThetaResolution(16); sphere->SetPhiResolution(16);
-  vtkPolyDataMapper *sphereMapper = vtkPolyDataMapper::New();
-    sphereMapper->SetInput(sphere->GetOutput());
-  vtkActor *sphereActor = vtkActor::New();
+    vtkPolyDataMapper *sphereMapper = vtkPolyDataMapper::New();
+    sphereMapper->SetInputConnection(sphere->GetOutputPort());
+    vtkActor *sphereActor = vtkActor::New();
     sphereActor->SetMapper(sphereMapper);
-    sphereActor->GetProperty()->SetColor(0.8900,0.6600,0.4100);
+    sphereActor->GetProperty()->SetColor(0.8900, 0.6600, 0.4100);
 
-  // assign our actor to both renderers
-  ren1->AddActor(coneActor);
-  ren2->AddActor(sphereActor);
-  ren3->AddActor(cubeActor);
+    // assign our actor to both renderers
+    ren1->AddActor(coneActor);
+    ren2->AddActor(sphereActor);
+    ren3->AddActor(cubeActor);
 
-  // set the size of our window
-  renWindow1->SetSize(800,400);
-  renWindow2->SetSize(400,400);
+    // set the size of our window
+    renWindow1->SetSize(800, 400);
+    renWindow2->SetSize(400, 400);
 
-  // set the viewports and background of the renderers
-  ren1->SetViewport(0,0,0.5,1);
-  ren1->SetBackground(0.9,0.9,0.9);
-  ren2->SetViewport(0.5,0,1,1);
-  ren2->SetBackground(1,1,1);
-  ren3->SetBackground(1,1,1);
+    // set the viewports and background of the renderers
+    ren1->SetViewport(0, 0, 0.5, 1);
+    ren1->SetBackground(0.9, 0.9, 0.9);
+    ren2->SetViewport(0.5, 0, 1, 1);
+    ren2->SetBackground(1, 1, 1);
+    ren3->SetBackground(1, 1, 1);
 
-  // draw the resulting scene
-  renWindow1->Render();
-  renWindow2->Render();
+    // draw the resulting scene
+    renWindow1->Render();
+    renWindow2->Render();
 
-  iren1->Start();
+    iren1->Start();
 
-  // Clean up
-  ren1->Delete();
-  ren2->Delete();
-  renWindow1->Delete();
-  iren1->Delete();
-  ren3->Delete();
-  renWindow2->Delete();
-  iren2->Delete();
-  cone->Delete();
-  coneMapper->Delete();
-  coneActor->Delete();
-  cube->Delete();
-  cubeMapper->Delete();
-  cubeActor->Delete();
-  sphere->Delete();
-  sphereMapper->Delete();
-  sphereActor->Delete();
+    // Clean up
+    ren1->Delete();
+    ren2->Delete();
+    renWindow1->Delete();
+    iren1->Delete();
+    ren3->Delete();
+    renWindow2->Delete();
+    iren2->Delete();
+    cone->Delete();
+    coneMapper->Delete();
+    coneActor->Delete();
+    cube->Delete();
+    cubeMapper->Delete();
+    cubeActor->Delete();
+    sphere->Delete();
+    sphereMapper->Delete();
+    sphereActor->Delete();
 
-  return 0;
+    return 0;
 }

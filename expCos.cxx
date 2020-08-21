@@ -25,6 +25,7 @@
 #include "vtkPlaneSource.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"
+#include "vtkPointData.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
@@ -33,7 +34,6 @@
 #include "vtkWarpScalar.h"
 
 #include "vtkRegressionTestImage.h"
-#include "vtkDebugLeaks.h"
 
 #include "vtkAutoInit.h" 
 VTK_MODULE_INIT(vtkRenderingOpenGL2);

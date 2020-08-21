@@ -17,7 +17,6 @@
 =========================================================================*/
 #include "vtkActor.h"
 #include "vtkConeSource.h"
-#include "vtkDebugLeaks.h"
 #include "vtkGlyph3D.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataMapper.h"
@@ -27,65 +26,76 @@
 #include "vtkRenderer.h"
 #include "vtkRenderer.h"
 #include "vtkSphereSource.h"
+#include "vtkAutoInit.h" 
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
+VTK_MODULE_INIT(vtkInteractionStyle);
 
-int main( int argc, char *argv[] )
+#pragma comment(lib, "vtkCommonCore-9.0d.lib")
+#pragma comment(lib, "vtkFiltersCore-9.0d.lib")
+#pragma comment(lib, "vtkFiltersSources-9.0d.lib")
+#pragma comment(lib, "vtkCommonExecutionModel-9.0d.lib")
+#pragma comment(lib, "vtkRenderingCore-9.0d.lib")
+#pragma comment(lib, "vtkTestingRendering-9.0d.lib")
+#pragma comment(lib, "vtkRenderingOpenGL2-9.0d.lib")
+#pragma comment(lib, "vtkInteractionStyle-9.0d.lib")
+
+int main(int argc, char *argv[])
 {
-  vtkDebugLeaks::PromptUserOff();
-
-  vtkRenderer *renderer = vtkRenderer::New();
-  vtkRenderWindow *renWin = vtkRenderWindow::New();
+    vtkRenderer *renderer = vtkRenderer::New();
+    vtkRenderWindow *renWin = vtkRenderWindow::New();
     renWin->AddRenderer(renderer);
-  vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
+    vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
     iren->SetRenderWindow(renWin);
 
-  vtkSphereSource *sphere = vtkSphereSource::New();
-    sphere->SetThetaResolution(8); sphere->SetPhiResolution(8);
-  vtkPolyDataMapper *sphereMapper = vtkPolyDataMapper::New();
-    sphereMapper->SetInput(sphere->GetOutput());
-  vtkActor *sphereActor = vtkActor::New();
+    vtkSphereSource *sphere = vtkSphereSource::New();
+    sphere->SetThetaResolution(8);
+    sphere->SetPhiResolution(8);
+    vtkPolyDataMapper *sphereMapper = vtkPolyDataMapper::New();
+    sphereMapper->SetInputConnection(sphere->GetOutputPort());
+    vtkActor *sphereActor = vtkActor::New();
     sphereActor->SetMapper(sphereMapper);
 
-  vtkConeSource *cone = vtkConeSource::New();
+    vtkConeSource *cone = vtkConeSource::New();
     cone->SetResolution(6);
 
-  vtkGlyph3D *glyph = vtkGlyph3D::New();
-    glyph->SetInput(sphere->GetOutput());
-    glyph->SetSource(cone->GetOutput());
+    vtkGlyph3D *glyph = vtkGlyph3D::New();
+    glyph->SetInputConnection(sphere->GetOutputPort());
+    glyph->SetSourceConnection(cone->GetOutputPort());
     glyph->SetVectorModeToUseNormal();
     glyph->SetScaleModeToScaleByVector();
     glyph->SetScaleFactor(0.25);
 
-  vtkPolyDataMapper *spikeMapper = vtkPolyDataMapper::New();
-    spikeMapper->SetInput(glyph->GetOutput());
+    vtkPolyDataMapper *spikeMapper = vtkPolyDataMapper::New();
+    spikeMapper->SetInputConnection(glyph->GetOutputPort());
 
-  vtkActor *spikeActor = vtkActor::New();
+    vtkActor *spikeActor = vtkActor::New();
     spikeActor->SetMapper(spikeMapper);
 
-  renderer->AddActor(sphereActor);
-  renderer->AddActor(spikeActor);
-  renderer->SetBackground(1,1,1);
-  renWin->SetSize(300,300);
+    renderer->AddActor(sphereActor);
+    renderer->AddActor(spikeActor);
+    renderer->SetBackground(1, 1, 1);
+    renWin->SetSize(300, 300);
 
-  // interact with data
-  renWin->Render();
+    // interact with data
+    renWin->Render();
 
-  int retVal = vtkRegressionTestImage( renWin );
+    int retVal = vtkRegressionTestImage(renWin);
 
-  if ( retVal == vtkRegressionTester::DO_INTERACTOR)
+    if (retVal == vtkRegressionTester::DO_INTERACTOR)
     {
-    iren->Start();
+        iren->Start();
     }
-  // Clean up
-  renderer->Delete();
-  renWin->Delete();
-  iren->Delete();
-  sphere->Delete();
-  sphereMapper->Delete();
-  sphereActor->Delete();
-  cone->Delete();
-  glyph->Delete();
-  spikeMapper->Delete();
-  spikeActor->Delete();
+    // Clean up
+    renderer->Delete();
+    renWin->Delete();
+    iren->Delete();
+    sphere->Delete();
+    sphereMapper->Delete();
+    sphereActor->Delete();
+    cone->Delete();
+    glyph->Delete();
+    spikeMapper->Delete();
+    spikeActor->Delete();
 
-  return !retVal;
+    return !retVal;
 }
